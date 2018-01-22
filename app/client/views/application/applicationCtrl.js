@@ -109,6 +109,7 @@ angular.module('reg')
 
         // Semantic-UI form validation
         $('.ui.form').form({
+          inline: true,
           fields: {
             name: {
               identifier: 'name',
@@ -128,7 +129,7 @@ angular.module('reg')
                 }
               ]
             },
-            name: {
+            major: {
               identifier: 'major',
               rules: [
                 {
@@ -179,9 +180,14 @@ angular.module('reg')
 
 	 function uploadResume(){
 		 $("#resume").submit(function(e) {
-			//console.log($scope.user.email);
 			e.preventDefault();
-			console.log('test');
+
+			var fileSizeBytes = (this[0].files[0].size / 1024 / 1024);
+			var fileSize = fileSizeBytes.toFixed(2);
+			if(fileSize > 2){
+				sweetAlert("Uh oh!", "Your resume file is too large:\n The limit is 2 MB, your file is " + (fileSize) + " MB", "error");
+				return;
+                        };
 			var formData = new FormData(this);
 			formData.append('email',$scope.user.email);
 			$.ajax({
@@ -192,7 +198,7 @@ angular.module('reg')
 					_updateUser();
 				},
 				error: function () {
-					console.log('err'); // replace with proper error handling
+					sweetAlert("Uh oh!", "Something went wrong with uploading your resume!", "error");
 				},
 				cache: false,
 				contentType: false,
@@ -209,7 +215,7 @@ angular.module('reg')
           //_updateUser();
         }
         else{
-          sweetAlert("Uh oh!", "Please Fill The Required Fields", "error");
+          sweetAlert("Uh oh!", "Please complete the required fields!", "error");
         }
       };
 

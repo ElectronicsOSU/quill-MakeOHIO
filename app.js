@@ -49,7 +49,12 @@ app.use('/auth', authRouter);
 require('./app/server/routes')(app);
 
 // File upload
-app.use(fileUpload());
+//app.use(fileUpload());
+
+
+app.use(fileUpload({
+	limits: { fileSize: 2 * 1024 * 1024 },
+}));
 
 app.post('/register/upload', function(req, res) {
 	console.log("We got an upload");
