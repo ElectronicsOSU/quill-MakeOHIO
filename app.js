@@ -12,6 +12,8 @@ var fileUpload      = require('express-fileupload');
 
 var mongoose        = require('mongoose');
 var port            = process.env.PORT || 3000;
+var url             = require("url");
+var root_path       = url.parse(process.env.ROOT_URL).pathname;
 var database        = process.env.DATABASE || process.env.MONGODB_URI || "mongodb://localhost:27017";
 
 var settingsConfig  = require('./config/settings');
@@ -34,17 +36,17 @@ app.use(bodyParser.json());
 
 app.use(methodOverride());
 
-app.use('/register', express.static(__dirname + '/app/client'));
+app.use(root_path, express.static(__dirname + '/app/client'));
 
 // Routers =====================================================================
 
 var apiRouter = express.Router();
 require('./app/server/routes/api')(apiRouter);
-app.use('/api', apiRouter);
+app.use(root_path + '/api', apiRouter);
 
 var authRouter = express.Router();
 require('./app/server/routes/auth')(authRouter);
-app.use('/auth', authRouter);
+app.use(root_path + '/auth', authRouter);
 
 require('./app/server/routes')(app);
 
@@ -56,7 +58,7 @@ app.use(fileUpload({
 	limits: { fileSize: 2 * 1024 * 1024 },
 }));
 
-app.post('/register/upload', function(req, res) {
+app.post(root_path + '/upload', function(req, res) {
 	console.log("We got an upload");
 	console.log(req.files);
 	console.log(req.body['email']);
