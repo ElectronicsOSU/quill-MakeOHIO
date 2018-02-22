@@ -10,8 +10,14 @@ angular.module('reg')
     'UserService',
     function($scope, $rootScope, $state, $http, currentUser, Settings, Session, UserService){
 
+      var base = '';
+
       // Set up the user
       $scope.user = currentUser.data;
+
+      // Has the student uploaded their resume?
+      $scope.hasUploadedResume = $scope.user.status.completedProfile;
+      $scope.resumeFileName = $scope.user.email + '.pdf';
 
       // Is the student from OSU?
       $scope.isOSUStudent = ($scope.user.email.split('@')[1] == 'osu.edu') || ($scope.user.email.split('@')[1] == 'buckeyemail.osu.edu');
@@ -177,6 +183,13 @@ angular.module('reg')
           }
         });
       }
+
+      $scope.getResume = function(ev){
+        ev.preventDefault(); // prevent href default behavior
+        console.log("Requesting server to download user's resume");
+        UserService.getResume($scope.resumeFileName);
+      };
+
 
 	 function uploadResume(){
 		 $("#resume").submit(function(e) {

@@ -75,6 +75,32 @@ angular.module('reg')
         return $http.get(base + '/' + 'stats');
       },
 
+      getResume: function(resumeName){
+        return $http.get(base + '/' + resumeName + '/' + Session.getUserId() + '/resume').success(function (data, status, headers) {
+        headers = headers();
+        var filename = headers['x-filename'];
+        var contentType = headers['content-type'];
+
+        var linkElement = document.createElement('a');
+        try {
+            var blob = new Blob([data], { type: contentType });
+            var url = window.URL.createObjectURL(blob);
+            linkElement.setAttribute('href', url);
+            linkElement.setAttribute("download", filename);
+            var clickEvent = new MouseEvent("click", {
+                "view": window,
+                "bubbles": true,
+                "cancelable": false
+            });
+            linkElement.dispatchEvent(clickEvent);
+        } catch (ex) {
+            console.log(ex);
+        }
+        }).error(function (data) {
+        console.log(data);
+        });
+      },
+
       getCSV: function(){
         return $http.get(base + '/' + 'exportcsv').success(function (data, status, headers) {
         headers = headers();

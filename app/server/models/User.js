@@ -40,10 +40,10 @@ var profile = {
 
   resume: {
     type: Boolean,
-	required: true,
-	default: false,
+    required: true,
+    default: false,
   },
-  
+
   essay: {
     type: String,
     min: 0,

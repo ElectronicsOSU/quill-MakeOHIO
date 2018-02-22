@@ -250,6 +250,18 @@ module.exports = function(router) {
   });
 
   /**
+   * Get a user's resume. Uses the code associated
+   * with the user making the request.
+   */
+  router.get('/users/:resume/:id/resume', isOwnerOrAdmin, function(req, res){
+    var file = './uploads/resumes/' + req.params.resume;
+    console.log("Downloading " + req.params.resume + "'s resume");
+    res.setHeader("x-filename", req.params.resume);
+    res.header('Content-type', 'application/pdf');
+    res.download(file);
+  });
+
+  /**
    * Get a user's team member's names. Uses the code associated
    * with the user making the request.
    */

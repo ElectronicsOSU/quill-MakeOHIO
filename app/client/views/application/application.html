@@ -77,12 +77,13 @@
           </select>
         </div>
 		
-		<div class="field">
-		<label>Resume</label>
-			<form id="resume" method="post" enctype="multipart/form-data">
-				<input name="resume" type="file" accept=".pdf"/>
-			</form>
-			<h6 style="padding:none"><strong>You must submit your resume as a PDF, no exceptions!</strong></h6>
+        <div class="field">
+          <label>Resume</label>
+          <form id="resume" method="post" enctype="multipart/form-data">
+            <input name="resume" type="file" accept=".pdf"/>
+          </form>
+          <h6 style="padding:0px; margin:0px;"><strong>You must submit your resume as a PDF, no exceptions!</strong></h6>
+          <h6 ng-show="hasUploadedResume" style="padding:0px; margin:0px;"><strong>Your resume has been uploaded and renamed to: <a ng-click="getResume($event)" href="#">{{resumeFileName}}</a></strong></h6>
         </div>
 
         <div class="field">
