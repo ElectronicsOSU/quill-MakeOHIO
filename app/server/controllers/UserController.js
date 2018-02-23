@@ -692,11 +692,11 @@ UserController.resetPassword = function(token, password, callback){
  * [ADMIN ONLY]
  *
  * Admit a user.
- * @param  {String}   userId   User id of the admit
- * @param  {String}   user     User doing the admitting
+ * @param  {String}   id        User id to admit
+ * @param  {String}   admitter  User doing the admitting
  * @param  {Function} callback args(err, user)
  */
-UserController.admitUser = function(id, user, callback){
+UserController.admitUser = function(id, admitter, callback){
   Settings.getRegistrationTimes(function(err, times){
     User
       .findOneAndUpdate({
@@ -705,13 +705,20 @@ UserController.admitUser = function(id, user, callback){
       },{
         $set: {
           'status.admitted': true,
-          'status.admittedBy': user.email,
+          'status.admittedBy': admitter.email,
           'status.confirmBy': times.timeConfirm
         }
       }, {
         new: true
       },
       callback);
+  });
+  User.findOne(
+    {
+      _id: id
+    },
+    function(err, user){
+      Mailer.sendAdmitEmail(user.email);
   });
 };
 

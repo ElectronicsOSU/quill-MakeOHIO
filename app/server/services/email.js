@@ -158,6 +158,48 @@ controller.sendPasswordResetEmail = function(email, token, callback) {
 };
 
 /**
+ * Send a participant email upon admittance.
+ * @param  {[type]}   email    [description]
+ * @param  {[type]}   token    [description]
+ * @param  {Function} callback [description]
+ */
+controller.sendAdmitEmail = function(email, callback) {
+
+  var options = {
+    to: email,
+    subject: "["+HACKATHON_NAME+"] - Confirmation required!"
+  };
+
+  var locals = {
+    title: 'Event Confirmation',
+    subtitle: '',
+    description: 'The next step is to confirm that you will be attending the event.' + '<br/>' +
+      'Please <b>complete the confirmation survey <u>as soon as you get this email<u/></b>, which can be accessed by clicking on the button below.',
+    actionUrl: ROOT_URL + '/confirmation',
+    actionName: "Confirm Attendance"
+  };
+
+  /**
+   * Eamil-verify takes a few template values:
+   * {
+   *   verifyUrl: the url that the user must visit to verify their account
+   * }
+   */
+  sendOne('email-link-action', options, locals, function(err, info){
+    if (err){
+      console.log(err);
+    }
+    if (info){
+      console.log(info.message);
+    }
+    if (callback){
+      callback(err, info);
+    }
+  });
+
+};
+
+/**
  * Send a password recovery email.
  * @param  {[type]}   email    [description]
  * @param  {Function} callback [description]
