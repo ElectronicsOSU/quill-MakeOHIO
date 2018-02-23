@@ -74,6 +74,7 @@ angular.module('reg')
       function _setupForm(){
         // Semantic-UI form validation
         $('.ui.form').form({
+          inline: true,
           fields: {
             shirt: {
               identifier: 'shirt',
@@ -88,8 +89,8 @@ angular.module('reg')
               identifier: 'phone',
               rules: [
                 {
-                  type: 'empty',
-                  prompt: 'Please enter a phone number.'
+                  type: "regExp[^((\\+\\d{1,2}|1)[\\s.-]?)?\\(?[2-9](?!11)\\d{2}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$]",
+                  prompt: 'Please enter a valid phone number.'
                 }
               ]
             },
@@ -127,6 +128,8 @@ angular.module('reg')
       $scope.submitForm = function(){
         if ($('.ui.form').form('is valid')){
           _updateUser();
+        } else {
+           sweetAlert("Uh oh!", "Please Fill The Required Fields", "error");
         }
       };
 
