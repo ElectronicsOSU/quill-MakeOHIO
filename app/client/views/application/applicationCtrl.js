@@ -1,3 +1,6 @@
+const angular = require("angular");
+const swal = require("sweetalert");
+
 angular.module('reg')
   .controller('ApplicationCtrl', [
     '$scope',
@@ -8,7 +11,7 @@ angular.module('reg')
     'settings',
     'Session',
     'UserService',
-    function($scope, $rootScope, $state, $http, currentUser, Settings, Session, UserService){
+    function($scope, $rootScope, $state, $http, currentUser, settings, Session, UserService) {
 
       var base = '';
 
@@ -31,7 +34,7 @@ angular.module('reg')
       populateSchools();
       _setupForm();
 
-      $scope.regIsClosed = Date.now() > Settings.data.timeClose;
+      $scope.regIsClosed = Date.now() > settings.data.timeClose;
 
       /**
        * TODO: JANK WARNING
@@ -51,43 +54,37 @@ angular.module('reg')
 
         $http
           .get('assets/schools.csv')
-          .then(function(res){ 
+          .then(function(res){
             $scope.schools = res.data.split('\n');
             $scope.schools.push('Other');
 
             var content = [];
 
-            for(i = 0; i < $scope.schools.length; i++) {                                          
-              $scope.schools[i] = $scope.schools[i].trim(); 
+            for(i = 0; i < $scope.schools.length; i++) {
+              $scope.schools[i] = $scope.schools[i].trim();
               content.push({title: $scope.schools[i]})
             }
 
             $('#school.ui.search')
               .search({
                 source: content,
-                cache: true,     
-                onSelect: function(result, response) {                                    
+                cache: true,
+                onSelect: function(result, response) {
                   $scope.user.profile.school = result.title.trim();
-                }        
-              })             
-          });          
+                }
+              })
+          });
       }
 
       function _updateUser(e){
         UserService
           .updateProfile(Session.getUserId(), $scope.user.profile)
-          .success(function(data){
-            sweetAlert({
-              title: "Awesome!",
-              text: "Your application has been saved.",
-              type: "success",
-              confirmButtonColor: "#e76482"
-            }, function(){
-              $state.go('app.dashboard');
+          .then(response => {
+            swal("Awesome!", "Your application has been saved.", "success").then(value => {
+              $state.go("app.dashboard");
             });
-          })
-          .error(function(res){
-            sweetAlert("Uh oh!", "Something went wrong.", "error");
+          }, response => {
+            swal("Uh oh!", "Something went wrong.", "error");
           });
       }
 
@@ -96,7 +93,7 @@ angular.module('reg')
       }
 
       function minorsAreAllowed() {
-        return Settings.data.allowMinors;
+        return settings.data.allowMinors;
       }
 
       function minorsValidation() {
@@ -198,7 +195,7 @@ angular.module('reg')
 			var fileSizeBytes = (this[0].files[0].size / 1024 / 1024);
 			var fileSize = fileSizeBytes.toFixed(2);
 			if(fileSize > 2){
-				sweetAlert("Uh oh!", "Your resume file is too large:\n The limit is 2 MB, your file is " + (fileSize) + " MB", "error");
+				swal("Uh oh!", "Your resume file is too large:\n The limit is 2 MB, your file is " + (fileSize) + " MB", "error");
 				return;
                         };
 			var formData = new FormData(this);
@@ -211,7 +208,7 @@ angular.module('reg')
 					_updateUser();
 				},
 				error: function () {
-					sweetAlert("Uh oh!", "Something went wrong with uploading your resume!", "error");
+					swal("Uh oh!", "Something went wrong with uploading your resume!", "error");
 				},
 				cache: false,
 				contentType: false,
@@ -219,7 +216,7 @@ angular.module('reg')
 			});
 		});
 		$("#resume").submit();
-		 
+
 	 }
 
       $scope.submitForm = function(){
@@ -228,8 +225,7 @@ angular.module('reg')
           //_updateUser();
         }
         else{
-          sweetAlert("Uh oh!", "Please complete the required fields!", "error");
+          swal("Uh oh!", "Please complete the required fields!", "error");
         }
       };
-
     }]);
