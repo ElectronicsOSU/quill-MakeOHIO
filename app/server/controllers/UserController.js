@@ -155,6 +155,7 @@ UserController.createUser = function(email, password, callback) {
     u.password = User.generateHash(password);
     u.save(function(err){
       if (err){
+        // Duplicate key error codes
         if (err.name === 'MongoError' && (err.code === 11000 || err.code === 11001)) {
           return callback({
             message: 'An account for this email already exists.'
@@ -321,7 +322,7 @@ UserController.getPage = function(query, callback){
  * @param  {Function} callback args(err, user)
  */
 UserController.getById = function (id, callback){
-  User.findById(id, callback);
+  User.findById(id).exec(callback);
 };
 
 /**
@@ -390,7 +391,7 @@ UserController.updateProfileById = function (id, profile, callback){
  */
 UserController.updateConfirmationById = function (id, confirmation, callback){
 
-  User.findById(id, function(err, user){
+  User.findById(id).exec(function(err, user){
 
     if(err || !user){
       return callback(err);
@@ -478,7 +479,7 @@ UserController.verifyByToken = function(token, callback){
  * @param  {Function} callback args(err, users)
  */
 UserController.getTeammates = function(id, callback){
-  User.findById(id, function(err, user){
+  User.findById(id).exec(function(err, user){
     if (err || !user){
       return callback(err, user);
     }
@@ -767,6 +768,49 @@ UserController.checkOutById = function(id, user, callback){
   callback);
 };
 
+/**
+ * [ADMIN ONLY]
+ *
+ * Make user an admin
+ * @param  {String}   userId   User id of the user being made admin
+ * @param  {String}   user     User making this person admin
+ * @param  {Function} callback args(err, user)
+ */
+UserController.makeAdminById = function(id, user, callback){
+  User.findOneAndUpdate({
+    _id: id,
+    verified: true
+  },{
+    $set: {
+      'admin': true
+    }
+  }, {
+    new: true
+  },
+  callback);
+};
+
+/**
+ * [ADMIN ONLY]
+ *
+ * Make user an admin
+ * @param  {String}   userId   User id of the user being made admin
+ * @param  {String}   user     User making this person admin
+ * @param  {Function} callback args(err, user)
+ */
+UserController.removeAdminById = function(id, user, callback){
+  User.findOneAndUpdate({
+    _id: id,
+    verified: true
+  },{
+    $set: {
+      'admin': false
+    }
+  }, {
+    new: true
+  },
+  callback);
+};
 
 /**
  * [ADMIN ONLY]

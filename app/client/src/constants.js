@@ -1,3 +1,5 @@
+const angular = require('angular');
+
 angular.module('reg')
     .constant('EVENT_INFO', {
         NAME: 'MakeOHI/O 2018',

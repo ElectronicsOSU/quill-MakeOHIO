@@ -139,6 +139,13 @@ angular.module('reg')
         return $http.post(base + '/' + id + '/checkout');
       },
 
+      makeAdmin: function(id){
+        return $http.post(base + id + '/makeadmin');
+      },
+
+      removeAdmin: function(id){
+        return $http.post(base + id + '/removeadmin');
+      },
     };
   }
   ]);
